@@ -27,12 +27,12 @@ public class MyTextWebSocketFrameHandler extends SimpleChannelInboundHandler<Tex
     public static ChannelGroup users =
             new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
-    //获取消息监听器容器
-    @Autowired
-    private SimpleMessageListenerContainer messageListenerContainer;
+    // 从Spring容器中获取消息监听器容器,处理订阅消息sysNotice
+    SimpleMessageListenerContainer messageListenerContainer = (SimpleMessageListenerContainer) SpringUtil.getApplicationContext()
+            .getBean(SimpleMessageListenerContainer.class);
 
-    @Autowired
-    private RabbitAdmin rabbitAdmin;
+    RabbitTemplate rabbitTemplate = SpringUtil.getApplicationContext()
+            .getBean(RabbitTemplate.class);
 
     private static ObjectMapper MAPPER = new ObjectMapper();
 
@@ -55,6 +55,7 @@ public class MyTextWebSocketFrameHandler extends SimpleChannelInboundHandler<Tex
 
         //只用完成新消息的提醒即可，只需要获取消息的数量
         //获取RabbitMQ的消息内容，并发送给用户
+        RabbitAdmin rabbitAdmin = new RabbitAdmin(rabbitTemplate);
         //拼接获取队列名称
         String queueName = "notice_" + userId;
         //获取Rabbit的Properties容器
