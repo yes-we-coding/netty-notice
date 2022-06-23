@@ -5,16 +5,16 @@ import com.rabbitmq.client.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Properties;
 
 public class NoticeListener implements ChannelAwareMessageListener {
 
-    @Autowired
-    private RabbitAdmin rabbitAdmin;
+    RabbitTemplate rabbitTemplate = SpringUtil.getApplicationContext()
+            .getBean(RabbitTemplate.class);
 
     private static ObjectMapper MAPPER = new ObjectMapper();
 
@@ -29,6 +29,7 @@ public class NoticeListener implements ChannelAwareMessageListener {
         //判断用户是否在线
         if (wsChannel != null) {
 
+            RabbitAdmin rabbitAdmin = new RabbitAdmin(rabbitTemplate);
             Properties queueProperties = rabbitAdmin.getQueueProperties(queueName);
 
             int num = 0;

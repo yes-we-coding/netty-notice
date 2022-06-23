@@ -1,7 +1,5 @@
 package com.example.notice;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
  * 统一API响应结果封装
  */
